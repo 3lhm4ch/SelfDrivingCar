@@ -4,15 +4,15 @@
 # You should apply the same image pre-processing steps you expect to run on images
 # that you will feed to your model during run-time.
 
-import sensor, image, time, os
+import sensor, time, os, pyb
 from machine import Pin
 
 # Skapa mappar om de inte finns (görs en gång)
-if not "vanster" in os.listdir():
+if "vanster" not in os.listdir():
     os.mkdir("vanster")
-if not "hoger" in os.listdir():
+if "hoger" not in os.listdir():
     os.mkdir("hoger")
-if not "fram" in os.listdir():
+if "fram" not in os.listdir():
     os.mkdir("fram")
 
 
@@ -26,17 +26,16 @@ img_id = 0
 hoger = False
 vanster = False
 
-def trainAI(hoger, vanster, img_id):
+# test:
+
+p0 = Pin("PF_4", Pin.OUT)
+
+# test end
+
+
+def trainAI(target_folder, img_id):
     clock.tick()
     img = sensor.snapshot()
-
-    if hoger:  #check if is turning hoger
-        target_folder = "hoger"
-    elif vanster:  #check if is turning vanster
-        target_folder = "vanster"
-    else:
-        target_folder = "fram"
-
     path = target_folder + "/image_" + str(img_id) + ".jpg"
     img.save(path)
     print(clock.fps())
@@ -45,8 +44,19 @@ def trainAI(hoger, vanster, img_id):
 while (True):
     hoger = False
     vanster = False
+    fram = False
 
     # all koden här.
+    p0.value(0)
+    pyb.delay(1000)
+    p0.value(1)
+    pyb.delay(1000)
 
-    trainAI(hoger, vanster, img_id)
+    if hoger:  # check if is turning hoger
+        trainAI("hoger", img_id)
+    elif vanster:  # check if is turning vanster
+        trainAI("vanster", img_id)
+    elif fram:
+        trainAI("fram", img_id)
+
     img_id += 1
