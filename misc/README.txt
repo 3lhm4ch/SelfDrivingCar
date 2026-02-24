@@ -1,7 +1,7 @@
-Digital pins: PF_4(LEDB) PC_13(LEDG) PE_3(LEDR)
+Digital pins: LEDB LEDG LEDR
 
 # create an output pin on pin #0
-p0 = Pin(0, Pin.OUT)
+p0 = Pin("LEDB", Pin.OUT)
 
 # set the value low then high
 p0.value(0)

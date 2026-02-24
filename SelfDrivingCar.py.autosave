@@ -1,6 +1,15 @@
 import sensor, time, os, pyb
 from machine import Pin
 
+if "vanster" not in os.listdir():
+    os.rmdir("vanster")
+if "hoger" not in os.listdir():
+    os.rmdir("hoger")
+if "fram" not in os.listdir():
+    os.rmdir("fram")
+if "stop" not in os.listdir():
+    os.rmdir("stop")
+
 # Skapa mappar om de inte finns (görs en gång)
 if "vanster" not in os.listdir():
     os.mkdir("vanster")
@@ -10,7 +19,6 @@ if "fram" not in os.listdir():
     os.mkdir("fram")
 if "stop" not in os.listdir():
     os.mkdir("stop")
-
 
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
