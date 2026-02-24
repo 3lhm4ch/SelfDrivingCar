@@ -1,66 +1,97 @@
-import sensor, time, os, pyb
+import sensor
+import time
+import os
 from machine import Pin
 
-# Skapa mappar om de inte finns (görs en gång)
-if "vanster" not in os.listdir():
-    os.mkdir("vanster")
-if "hoger" not in os.listdir():
-    os.mkdir("hoger")
-if "fram" not in os.listdir():
-    os.mkdir("fram")
-if "stop" not in os.listdir():
-    os.mkdir("stop")
+
+# Checks if the right directories are included on the nicla vision. If not then add the directory
+def makeDir():
+    if "vanster" not in os.listdir():
+        os.mkdir("vanster")
+    if "hoger" not in os.listdir():
+        os.mkdir("hoger")
+    if "fram" not in os.listdir():
+        os.mkdir("fram")
+    if "stop" not in os.listdir():
+        os.mkdir("stop")
 
 
-sensor.reset()
-sensor.set_pixformat(sensor.RGB565)
-sensor.set_framesize(sensor.QVGA)
-sensor.skip_frames(time=2000)
+# Setup for the camera
+def sensorSetup():
+    sensor.reset()
+    sensor.set_pixformat(sensor.RGB565)
+    sensor.set_framesize(sensor.QVGA)
+    sensor.skip_frames(time=2000)
+
+
+# Takes a picture and sends it to the internal storage of the nicla vision
+def takePic(target_folder, img_id):
+    # if target_folder == "stop":
+    #     return
+    img = sensor.snapshot()
+    path = target_folder + "/" + target_folder + str(img_id) + ".jpg"
+    img.save(path)
+    print(path)
+
+
+# Turns dc motor on/off
+def runCar(direction):
+    if direction == "fram":
+        pMotHog.on()
+        pMotVan.on()
+        print("driving forward")
+    elif direction == "hoger":
+        pMotHog.off()
+        pMotVan.on()
+        print("driving right")
+    elif direction == "vanster":
+        pMotHog.on()
+        pMotVan.off()
+        print("driving left")
+    else:
+        pMotHog.off()
+        pMotVan.off()
+        print("Stop")
+
+
+# Checks which buttons are pressed. 0=on 1=off
+def buttonPress():
+    if pFra.value() == 0:
+        if pHog.value() == 0:
+            return "hoger"
+        elif pVan.value() == 0:
+            return "vanster"
+        else:
+            return "fram"
+    else:
+        return "stop"
+
+
+# Global setup
+
+makeDir()
+sensorSetup()
+
+# Global variables
 
 clock = time.clock()
 img_id = 0
-hoger = False
-vanster = False
-fram = False
 
-# test:
+# pin setup:
 
-p0 = Pin("LEDB", Pin.OUT)
-
-# test end
-
-
-def trainAI(target_folder, img_id):
-    img = sensor.snapshot()
-    path = target_folder + "/" + str(img_id) + ".jpg"
-    img.save(path)
+pMotHog = Pin("CS", Pin.OUT)
+pMotVan = Pin("D0", Pin.OUT)
+pFra = Pin("D1", Pin.IN, Pin.PULL_UP)
+pHog = Pin("D2", Pin.IN, Pin.PULL_UP)
+pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
 
 
-def runCar():
-    # make motor and attach.
-    p0.value(0)
-    pyb.delay(1000)
-    p0.value(1)
-    pyb.delay(1000)
-
-
+# Run loop
 while (True):
     clock.tick()
-    hoger = False
-    vanster = False
-    fram = False
 
-    # all koden här.
-    runCar()
-
-    if hoger:  # check if is turning hoger
-        trainAI("hoger", img_id)
-    elif vanster:  # check if is turning vanster
-        trainAI("vanster", img_id)
-    elif fram:  # check if is going straight
-        trainAI("fram", img_id)
-    else:
-        trainAI("stop", img_id)
+    # runCar(buttonPress())
+    takePic(buttonPress(), img_id)
 
     img_id += 1
     print(clock.fps())
