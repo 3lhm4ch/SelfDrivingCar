@@ -1,0 +1,1 @@
+Digital pins: SCLK, CIPO, COPI, CS, D0, D3, D2, D1, SCL, SDA
