@@ -34,26 +34,6 @@ def takePic(target_folder, img_id):
     print(path)
 
 
-# Turns dc motor on/off
-def runCar(direction):
-    if direction == "fram":
-        pMotHog.on()
-        pMotVan.on()
-        print("driving forward")
-    elif direction == "hoger":
-        pMotHog.off()
-        pMotVan.on()
-        print("driving right")
-    elif direction == "vanster":
-        pMotHog.on()
-        pMotVan.off()
-        print("driving left")
-    else:
-        pMotHog.off()
-        pMotVan.off()
-        print("Stop")
-
-
 # Checks which buttons are pressed. 0=on 1=off
 def buttonPress():
     if pFra.value() == 0:
@@ -79,8 +59,6 @@ img_id = 0
 
 # pin setup:
 
-pMotHog = Pin("CS", Pin.OUT)
-pMotVan = Pin("D0", Pin.OUT)
 pFra = Pin("D1", Pin.IN, Pin.PULL_UP)
 pHog = Pin("D2", Pin.IN, Pin.PULL_UP)
 pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
@@ -90,8 +68,7 @@ pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
 while (True):
     clock.tick()
 
-    # runCar(buttonPress())
-    takePic(buttonPress(), img_id)
+    takePic(buttonPress(), img_id)  # takePic takes time...
 
     img_id += 1
     print(clock.fps())
