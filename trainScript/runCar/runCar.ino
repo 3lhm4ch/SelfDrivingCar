@@ -1,6 +1,5 @@
 #include <Arduino.h>
-#include "PinDefinitionsAndMore.h"
-#include <IRremote.hpp>
+#include <IRremote.h>
 
 String direction = "stop";
 int motorleft = 3;
@@ -14,38 +13,44 @@ IRrecv irrecv(RECV_PIN);
 decode_results results;
 
 void setup() {
-    Serial.begin(115200);
+  Serial.begin(115200);
 
-    // Ir remote setup
-    Serial.begin(9600);
-    irrecv.enableIRIn();
-    irrecv.blink13(true);
+  // Ir remote setup
+  Serial.begin(9600);
+  irrecv.enableIRIn();
+  irrecv.blink13(true);
 
-    // Motor setup
-    pinMode(motorleft, OUTPUT);
-    pinMode(motorright, OUTPUT);
+  // Motor setup
+  pinMode(motorleft, OUTPUT);
+  pinMode(motorright, OUTPUT);
 
-    // Output to nicla vision setup
-    pinMode(right, OUTPUT);
-    pinMode(left, OUTPUT);
-    pinMode(forward, OUTPUT);
+  // Output to nicla vision setup
+  pinMode(right, OUTPUT);
+  pinMode(left, OUTPUT);
+  pinMode(forward, OUTPUT);
 }
 
 void loop() {
-
-    if (irrecv.decode(&results)){
-        Serial.println(results.value, HEX);
-        irrecv.resume();
-        // direction = irRemote();
-    } else{
-      direction = "stop";
-    }
-    // runCar(direction);
+  if (irrecv.decode(&results)){
+    direction = irRemote(direction);
+  }
+  runCar(direction);
 }
 
 
-String irRemote(){
+String irRemote(String direction){
   Serial.println(results.value, HEX);
+  if (results.value == 0xFFFFFFFF){
+    return direction;
+  } else if (results.value == 0xFFE01F){
+    return "left";
+  } else if (results.value == 0xFF906F){
+    return "right";
+  } else if (results.value == 0xFF9867){
+    return "stop";
+  } else{
+    return "forward";
+  }
   irrecv.resume();
 }
 
@@ -53,22 +58,21 @@ void runCar(String direction){
   digitalWrite(left, LOW);
   digitalWrite(forward, LOW);
   digitalWrite(right, LOW);
-  if (direction == "fram"){
-    if (direction == "vanster"){
-      digitalWrite(left, HIGH);
-      digitalWrite(motorleft, LOW);
-      digitalWrite(motorright, HIGH);
-    } else if (direction == "hoger"){
-      digitalWrite(right, HIGH);
-      digitalWrite(motorleft, HIGH);
-      digitalWrite(motorright, LOW);
-    } else{
-      digitalWrite(forward, HIGH);
-      digitalWrite(motorleft, HIGH);
-      digitalWrite(motorright, LOW);
-    }
-  } else{
+  
+  if (direction == "vanster"){
+    digitalWrite(left, HIGH);
+    digitalWrite(motorleft, LOW);
+    digitalWrite(motorright, HIGH);
+  } else if (direction == "hoger"){
+    digitalWrite(right, HIGH);
+    digitalWrite(motorleft, HIGH);
+    digitalWrite(motorright, LOW);
+  } else if (direction == "stop"){
     digitalWrite(motorleft, LOW);
     digitalWrite(motorright, LOW);
+  } else{
+    digitalWrite(forward, HIGH);
+    digitalWrite(motorleft, HIGH);
+    digitalWrite(motorright, HIGH);
   }
 }

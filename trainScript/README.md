@@ -1,11 +1,12 @@
 To train the model you need one arduino UNO and one arduino nicla vision. Upload the "trainingScript.py" to the arduino nicla vision via openmv ide. Upload the "runCar.ino" to the arduino uno via arduino ide. 
 
-D1 -> Höger -> 5
-D2 -> Vänster -> 6
-D3 -> Fram -> 7
+Nicla   Arduino     Direction
+D1   ->   5         Right
+D2   ->   6         Left
+D3   ->   7         Forwards
 
-Motorhöger -> CS & 4
-Motorvänster -> D0 & 3
+Right motor signal -> CS & 4
+Left motor signal -> D0 & 3
 
 
 Hex codes for ir remote. 

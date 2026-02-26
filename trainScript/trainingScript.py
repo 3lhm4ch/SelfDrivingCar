@@ -26,8 +26,9 @@ def sensorSetup():
 
 # Takes a picture and sends it to the internal storage of the nicla vision
 def takePic(target_folder, img_id):
-    # if target_folder == "stop":
-    #     return
+    if target_folder == "stop":  # if car is standing still then dont save to the folder
+        return
+
     img = sensor.snapshot()
     path = target_folder + "/" + target_folder + str(img_id) + ".jpg"
     img.save(path)
@@ -37,12 +38,11 @@ def takePic(target_folder, img_id):
 # Checks which buttons are pressed. 0=on 1=off
 def buttonPress():
     if pFra.value() == 0:
-        if pHog.value() == 0:
-            return "hoger"
-        elif pVan.value() == 0:
-            return "vanster"
-        else:
-            return "fram"
+        return "fram"
+    elif pHog.value() == 0:
+        return "hoger"
+    elif pVan.value() == 0:
+        return "vanster"
     else:
         return "stop"
 
@@ -59,9 +59,9 @@ img_id = 0
 
 # pin setup:
 
-pFra = Pin("SCLK", Pin.IN, Pin.PULL_UP)
-pHog = Pin("CIPO", Pin.IN, Pin.PULL_UP)
-pVan = Pin("COPI", Pin.IN, Pin.PULL_UP)
+pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
+pVan = Pin("D2", Pin.IN, Pin.PULL_UP)
+pFra = Pin("D3", Pin.IN, Pin.PULL_UP)
 
 
 # Run loop

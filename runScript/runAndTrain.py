@@ -4,6 +4,19 @@ import os
 from machine import Pin
 
 
+# Functions not in use
+def irRemote():
+    # find irremote and decode.
+    direction = "fram"
+    return direction
+
+
+# Functions not in use
+def ai():
+    img = sensor.snapshot()
+    # mata in img to ai model
+
+
 # Checks if the right directories are included on the nicla vision. If not then add the directory
 def makeDir():
     if "vanster" not in os.listdir():
@@ -26,17 +39,13 @@ def sensorSetup():
 
 # Takes a picture and sends it to the internal storage of the nicla vision
 def takePic(target_folder, img_id):
-    # if target_folder == "stop":
-    #     return
+    if target_folder == "stop":  # if car is standing still then dont save to the folder
+        return
+
     img = sensor.snapshot()
     path = target_folder + "/" + target_folder + str(img_id) + ".jpg"
     img.save(path)
     print(path)
-
-
-def ai():
-    img = sensor.snapshot()
-    # mata in img to ai model
 
 
 # Turns dc motor on/off
@@ -62,20 +71,13 @@ def runCar(direction):
 # Checks which buttons are pressed. 0=on 1=off
 def buttonPress():
     if pFra.value() == 0:
-        if pHog.value() == 0:
-            return "hoger"
-        elif pVan.value() == 0:
-            return "vanster"
-        else:
-            return "fram"
+        return "fram"
+    elif pHog.value() == 0:
+        return "hoger"
+    elif pVan.value() == 0:
+        return "vanster"
     else:
         return "stop"
-
-
-def irRemote():
-    # find irremote and decode.
-    direction = "fram"
-    return direction
 
 
 # Global setup
@@ -101,9 +103,11 @@ pFra = Pin("D3", Pin.IN, Pin.PULL_UP)
 while (True):
     clock.tick()
 
-    # runCar(ai())  # When running ai + training
-    # runCar(buttonPress())  # When training, run car via Arduino Uno.
-    takePic(buttonPress(), img_id)  # takePic takes time...
+    # runCar(ai())  # When running ai
+    # takePic(ai(), img_id)  # When running ai + training
+
+    # When training, run car via Arduino Uno.
+    takePic(buttonPress(), img_id)  # takePic() takes time...
 
     img_id += 1
     print(clock.fps())
