@@ -70,10 +70,10 @@ def buttonPress():
             return "fram"
     else:
         return "stop"
-    
+
 
 def irRemote():
-    # find irremote and decode. 
+    # find irremote and decode.
     direction = "fram"
     return direction
 
@@ -92,9 +92,9 @@ img_id = 0
 
 pMotHog = Pin("CS", Pin.OUT)
 pMotVan = Pin("D0", Pin.OUT)
-pFra = Pin("D1", Pin.IN, Pin.PULL_UP)
-pHog = Pin("D2", Pin.IN, Pin.PULL_UP)
-pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
+pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
+pVan = Pin("D2", Pin.IN, Pin.PULL_UP)
+pFra = Pin("D3", Pin.IN, Pin.PULL_UP)
 
 
 # Run loop
@@ -102,7 +102,7 @@ while (True):
     clock.tick()
 
     # runCar(ai())  # When running ai + training
-    # runCar(buttonPress())  # When training, run car via Arduino Uno. 
+    # runCar(buttonPress())  # When training, run car via Arduino Uno.
     takePic(buttonPress(), img_id)  # takePic takes time...
 
     img_id += 1

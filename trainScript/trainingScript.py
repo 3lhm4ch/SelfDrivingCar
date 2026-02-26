@@ -59,9 +59,9 @@ img_id = 0
 
 # pin setup:
 
-pFra = Pin("D1", Pin.IN, Pin.PULL_UP)
-pHog = Pin("D2", Pin.IN, Pin.PULL_UP)
-pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
+pFra = Pin("SCLK", Pin.IN, Pin.PULL_UP)
+pHog = Pin("CIPO", Pin.IN, Pin.PULL_UP)
+pVan = Pin("COPI", Pin.IN, Pin.PULL_UP)
 
 
 # Run loop
