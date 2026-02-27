@@ -3,13 +3,14 @@
 
 String direction = "stop";
 String directionBefore = direction;
-int motorleft = 3;
-int motorright = 4;
-int right = 5;
-int left = 6;
-int forward = 7;
+bool forw = false;
+const int motorleft = 3;
+const int motorright = 4;
+const int right = 5;
+const int left = 6;
+const int forward = 7;
 
-const int RECV_PIN = 7;
+const int RECV_PIN = 2;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
 
@@ -17,7 +18,6 @@ void setup() {
   Serial.begin(115200);
 
   // Ir remote setup
-  Serial.begin(9600);
   irrecv.enableIRIn();
   irrecv.blink13(true);
 
@@ -34,29 +34,38 @@ void setup() {
 void loop() {
   if (irrecv.decode(&results)){
     direction = irRemote(direction);
-  }
+    irrecv.resume();
+  } 
+  Serial.println(direction);
 
-  if (directionBefore != direction){
-    runCar(direction);
-  }
-  directionBefore = direction;
+  runCar(direction);
 }
 
 
 String irRemote(String direction){
-  Serial.println(results.value, HEX);
-  if (results.value == 0xFFFFFFFF){
-    return direction;
-  } else if (results.value == 0xFFE01F){
-    return "left";
-  } else if (results.value == 0xFF906F){
-    return "right";
+  if (results.value == 0xFFA857){
+    forw = true;
   } else if (results.value == 0xFF9867){
-    return "stop";
+    forw = false;
+  } 
+
+  if (forw == true){
+    if (results.value == 0xFFE01F){
+      direction = "left";
+    } else if (results.value == 0xFF906F){
+      direction = "right";
+    } else if (direction == "left" && results.value == 0xFFFFFFFF){
+      direction = "left";
+    } else if (direction == "right" && results.value == 0xFFFFFFFF){
+      direction = "right";
+    } else {
+      direction = "forward";
+    }
   } else{
-    return "forward";
+    direction = "stop";
   }
-  irrecv.resume();
+
+  return direction;
 }
 
 void runCar(String direction){

@@ -12,6 +12,7 @@ def sensorSetup():
     sensor.skip_frames(time=2000)
 
 
+# outputs the direction as a string
 def ai():
     img = sensor.snapshot()
     # mata in img to ai model

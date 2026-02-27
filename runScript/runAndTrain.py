@@ -11,7 +11,7 @@ def irRemote():
     return direction
 
 
-# Functions not in use
+# outputs the direction as a string
 def ai():
     img = sensor.snapshot()
     # mata in img to ai model
@@ -68,18 +68,6 @@ def runCar(direction):
         print("Stop")
 
 
-# Checks which buttons are pressed. 0=on 1=off
-def buttonPress():
-    if pFra.value() == 0:
-        return "fram"
-    elif pHog.value() == 0:
-        return "hoger"
-    elif pVan.value() == 0:
-        return "vanster"
-    else:
-        return "stop"
-
-
 # Global setup
 
 makeDir()
@@ -94,9 +82,6 @@ img_id = 0
 
 pMotHog = Pin("CS", Pin.OUT)
 pMotVan = Pin("D0", Pin.OUT)
-pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
-pVan = Pin("D2", Pin.IN, Pin.PULL_UP)
-pFra = Pin("D3", Pin.IN, Pin.PULL_UP)
 
 
 # Run loop
@@ -105,9 +90,6 @@ while (True):
 
     # runCar(ai())  # When running ai
     # takePic(ai(), img_id)  # When running ai + training
-
-    # When training, run car via Arduino Uno.
-    takePic(buttonPress(), img_id)  # takePic() takes time...
 
     img_id += 1
     print(clock.fps())
