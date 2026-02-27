@@ -2,6 +2,7 @@
 #include <IRremote.h>
 
 String direction = "stop";
+String directionBefore = direction;
 int motorleft = 3;
 int motorright = 4;
 int right = 5;
@@ -34,7 +35,11 @@ void loop() {
   if (irrecv.decode(&results)){
     direction = irRemote(direction);
   }
-  runCar(direction);
+
+  if (directionBefore != direction){
+    runCar(direction);
+  }
+  directionBefore = direction;
 }
 
 
@@ -55,22 +60,27 @@ String irRemote(String direction){
 }
 
 void runCar(String direction){
-  digitalWrite(left, LOW);
-  digitalWrite(forward, LOW);
-  digitalWrite(right, LOW);
-  
-  if (direction == "vanster"){
+  if (direction == "left"){
+    digitalWrite(forward, LOW);
+    digitalWrite(right, LOW);
     digitalWrite(left, HIGH);
     digitalWrite(motorleft, LOW);
     digitalWrite(motorright, HIGH);
-  } else if (direction == "hoger"){
+  } else if (direction == "right"){
+    digitalWrite(left, LOW);
+    digitalWrite(forward, LOW);
     digitalWrite(right, HIGH);
     digitalWrite(motorleft, HIGH);
     digitalWrite(motorright, LOW);
   } else if (direction == "stop"){
+    digitalWrite(left, LOW);
+    digitalWrite(forward, LOW);
+    digitalWrite(right, LOW);
     digitalWrite(motorleft, LOW);
     digitalWrite(motorright, LOW);
-  } else{
+  } else if (direction == "forward"){
+    digitalWrite(left, LOW);
+    digitalWrite(right, LOW);
     digitalWrite(forward, HIGH);
     digitalWrite(motorleft, HIGH);
     digitalWrite(motorright, HIGH);
