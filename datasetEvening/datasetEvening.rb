@@ -19,7 +19,6 @@ def smallestNumFiles()
 end
 
 def datasetEvening()
-    # Dir.chdir(mapp)
     targetFiles = smallestNumFiles()
     
     labels = Dir.glob("*")
@@ -31,7 +30,6 @@ def datasetEvening()
                 len = i.length-1
                 File.delete(i[rand(0..len)])
             end
-            # p i + ": Done"
             Dir.chdir("..")
         end
     end
