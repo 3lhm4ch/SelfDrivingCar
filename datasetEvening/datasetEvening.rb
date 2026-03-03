@@ -1,4 +1,4 @@
-def numFiles()
+def smallestNumFiles()
     numFiles = []
     labels = Dir.glob("*")
     labels.each do |i|
@@ -18,7 +18,7 @@ end
 
 def datasetEvening(mapp)
     Dir.chdir(mapp)
-    targetFiles = numFiles()
+    targetFiles = smallestNumFiles()
     
     labels = Dir.glob("*")
     labels.each do |i|
