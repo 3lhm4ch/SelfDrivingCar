@@ -1,17 +1,16 @@
 #include <Arduino.h>
 #include <IRremote.h>
 
-String direction = "stop";
-String directionBefore = direction;
-bool forw = false;
-const int motorleft = 3;
-const int motorright = 4;
+const int left = 7;
+const int forward = 6;
 const int right = 5;
-const int left = 6;
-const int forward = 7;
+const int motorleft = 4;
+const int motorright = 3;
+const int ir_pin = 2;
 
-const int RECV_PIN = 2;
-IRrecv irrecv(RECV_PIN);
+String direction = "stop";
+
+IRrecv irrecv(ir_pin);
 decode_results results;
 
 void setup() {
@@ -19,7 +18,7 @@ void setup() {
 
   // Ir remote setup
   irrecv.enableIRIn();
-  irrecv.blink13(true);
+  // irrecv.blink13(true);
 
   // Motor setup
   pinMode(motorleft, OUTPUT);
@@ -43,26 +42,20 @@ void loop() {
 
 
 String irRemote(String direction){
-  if (results.value == 0xFFA857){
-    forw = true;
-  } else if (results.value == 0xFF9867){
-    forw = false;
+  if (results.value == 0xFF9867){
+    return "stop";
   } 
 
-  if (forw == true){
-    if (results.value == 0xFFE01F){
-      direction = "left";
-    } else if (results.value == 0xFF906F){
-      direction = "right";
-    } else if (direction == "left" && results.value == 0xFFFFFFFF){
-      direction = "left";
-    } else if (direction == "right" && results.value == 0xFFFFFFFF){
-      direction = "right";
-    } else {
-      direction = "forward";
-    }
-  } else{
-    direction = "stop";
+  if (results.value == 0xFFFFFFFF){
+    return direction;
+  }
+
+  if (results.value == 0xFFE01F){
+    direction = "left";
+  } else if (results.value == 0xFF906F){
+    direction = "right";
+  } else if (results.value == 0xFFA857){
+    direction = "forward";
   }
 
   return direction;

@@ -21,6 +21,7 @@ def sensorSetup():
     sensor.reset()
     sensor.set_pixformat(sensor.RGB565)
     sensor.set_framesize(sensor.QVGA)
+    sensor.set_windowing((240, 240))  # just to test
     sensor.skip_frames(time=2000)
 
 
@@ -35,40 +36,36 @@ def takePic(target_folder, img_id):
     print(path)
 
 
-# Checks which buttons are pressed. 0=on 1=off
+# Checks which buttons are pressed. 1=on 0=off
 def buttonPress():
-    if pFra.value() == 0:
+    if pFra.value() == 1:
         return "fram"
-    elif pHog.value() == 0:
+    elif pHog.value() == 1:
         return "hoger"
-    elif pVan.value() == 0:
+    elif pVan.value() == 1:
         return "vanster"
     else:
         return "stop"
 
 
 # Global setup
-
 makeDir()
 sensorSetup()
 
 # Global variables
-
 clock = time.clock()
 img_id = 0
 
 # pin setup:
-
 pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
-pVan = Pin("D2", Pin.IN, Pin.PULL_UP)
-pFra = Pin("D3", Pin.IN, Pin.PULL_UP)
-
+pFra = Pin("D2", Pin.IN, Pin.PULL_UP)
+pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
 
 # Run loop
 while (True):
     clock.tick()
 
-    takePic(buttonPress(), img_id)  # takePic takes time...
+    takePic(buttonPress(), img_id)
 
     img_id += 1
     print(clock.fps())
