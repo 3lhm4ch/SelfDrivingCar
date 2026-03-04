@@ -57,9 +57,9 @@ clock = time.clock()
 img_id = 0
 
 # pin setup:
-pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
-pFra = Pin("D2", Pin.IN, Pin.PULL_UP)
 pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
+pFra = Pin("D2", Pin.IN, Pin.PULL_UP)
+pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
 
 # Run loop
 while (True):

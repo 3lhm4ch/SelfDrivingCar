@@ -34,10 +34,9 @@ void loop() {
   if (irrecv.decode(&results)){
     direction = irRemote(direction);
     irrecv.resume();
+    runCar(direction);
   } 
   Serial.println(direction);
-
-  runCar(direction);
 }
 
 

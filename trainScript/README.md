@@ -2,14 +2,14 @@ To train the model you need one arduino UNO and one arduino nicla vision. Upload
 
 <h3>connect the following pins on the nicla vision to the following pins on the Arduino Uno.</h3>
 Nicla   Arduino     Direction
+D3   ->   7         Left
+D2   ->   6         Forwards
 D1   ->   5         Right
-D2   ->   6         Left
-D3   ->   7         Forwards
 
 
-<h3>Connect the Relays signal to the following ports on both the Arduino uno and Nicla Vision.</h3>
-Right motor signal -> CS & 4
-Left motor signal -> D0 & 3
+<h3>Connect the Relays signal to the following ports on the Arduino Uno</h3>
+Right motor signal -> 3
+Left motor signal -> 4
 
 
 Hex codes for ir remote. 
