@@ -8,6 +8,7 @@ const int motorleft = 4;
 const int motorright = 3;
 const int ir_pin = 2;
 
+bool forw = false;
 String direction = "stop";
 
 IRrecv irrecv(ir_pin);
@@ -42,6 +43,7 @@ void loop() {
 
 String irRemote(String direction){
   if (results.value == 0xFF9867){
+    forw = false;
     return "stop";
   } 
 
@@ -49,12 +51,18 @@ String irRemote(String direction){
     return direction;
   }
 
-  if (results.value == 0xFFE01F){
-    direction = "left";
-  } else if (results.value == 0xFF906F){
-    direction = "right";
-  } else if (results.value == 0xFFA857){
-    direction = "forward";
+  if (results.value == 0xFFA857){
+    forw = true;
+  }
+
+  if (forw == true){
+    if (results.value == 0xFFE01F){
+      direction = "left";
+    } else if (results.value == 0xFF906F){
+      direction = "right";
+    } else{
+      direction = "forward";
+    }
   }
 
   return direction;

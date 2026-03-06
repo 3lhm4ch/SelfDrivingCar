@@ -1,7 +1,7 @@
-import sensor
+import sensor # type: ignore
 import time
 import os
-from machine import Pin
+from machine import Pin # type: ignore
 
 
 # Checks if the right directories are included on the nicla vision. If not then add the directory
@@ -27,9 +27,6 @@ def sensorSetup():
 
 # Takes a picture and sends it to the internal storage of the nicla vision
 def takePic(target_folder, img_id):
-    if target_folder == "stop":  # if car is standing still then dont save to the folder
-        return
-
     img = sensor.snapshot()
     path = target_folder + "/" + target_folder + str(img_id) + ".jpg"
     img.save(path)
@@ -38,14 +35,17 @@ def takePic(target_folder, img_id):
 
 # Checks which buttons are pressed. 1=on 0=off
 def buttonPress():
-    if pFra.value() == 1:
-        return "fram"
-    elif pHog.value() == 1:
-        return "hoger"
-    elif pVan.value() == 1:
-        return "vanster"
-    else:
+    if pFra.value() == pHog.value() and pHog.value() == pVan.value():
         return "stop"
+    else:
+        if pFra.value() == 1:
+            return "fram"
+        elif pHog.value() == 1:
+            return "hoger"
+        elif pVan.value() == 1:
+            return "vanster"
+        else:
+            return "stop"
 
 
 # Global setup
@@ -55,6 +55,7 @@ sensorSetup()
 # Global variables
 clock = time.clock()
 img_id = 0
+direction = "stop"
 
 # pin setup:
 pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
@@ -65,7 +66,9 @@ pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
 while (True):
     clock.tick()
 
-    takePic(buttonPress(), img_id)
+    direction = buttonPress()
+    if direction != "stop":
+        takePic(direction, img_id)
+        img_id += 1
 
-    img_id += 1
     print(clock.fps())
