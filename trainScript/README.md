@@ -8,12 +8,12 @@ D1   ->   5         Right
 
 
 <h3>Connect the Relays signal to the following ports on the Arduino Uno</h3>
-Right motor signal -> 3
-Left motor signal -> 4
+Right motor signal -> 3<br>
+Left motor signal -> 4<br>
 
 
 <h3>Hex codes for ir remote.</h3> 
-FFE01F = Left
-FF906F = Right
-FF9867 = Stop(down)
+FFE01F = Left<br>
+FF906F = Right<br>
+FF9867 = Stop(down)<br>
 FFA857 = Forward(settings)
