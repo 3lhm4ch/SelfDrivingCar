@@ -35,17 +35,17 @@ def takePic(target_folder, img_id):
 
 # Checks which buttons are pressed. 1=on 0=off
 def buttonPress():
-    if pFra.value() == pHog.value() and pHog.value() == pVan.value():
-        return "stop"
+    # if pFra.value() == pHog.value() and pHog.value() == pVan.value():
+    #     return "stop"
+    # else:
+    if pFra.value() == 1:
+        return "fram"
+    elif pHog.value() == 1:
+        return "hoger"
+    elif pVan.value() == 1:
+        return "vanster"
     else:
-        if pFra.value() == 1:
-            return "fram"
-        elif pHog.value() == 1:
-            return "hoger"
-        elif pVan.value() == 1:
-            return "vanster"
-        else:
-            return "stop"
+        return "stop"
 
 
 # Global setup
@@ -67,7 +67,7 @@ while (True):
     clock.tick()
 
     direction = buttonPress()
-    if direction != "stop":
+    if direction != "stop":  # Prevent corrupting images
         takePic(direction, img_id)
         img_id += 1
 
