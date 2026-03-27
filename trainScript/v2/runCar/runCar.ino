@@ -1,8 +1,6 @@
 #include <IRremote.h>
 
-#define PIN_LEFT 7
-#define PIN_FORWARD 6
-#define PIN_RIGHT 5
+#define PIN_STOP 5
 #define PIN_MOTOR_L 4
 #define PIN_MOTOR_R 3
 #define PIN_IR 11
@@ -19,59 +17,55 @@ decode_results results;
 void setup() {
   Serial.begin(115200);
 
-  // Ir remote setup
+  // IR remote setup
   irrecv.enableIRIn();
   irrecv.blink13(true);
 
-  // Motor setup
+  // Motor setup and output to Nicla vision
   pinMode(PIN_MOTOR_L, OUTPUT);
   pinMode(PIN_MOTOR_R, OUTPUT);
-
-  // Output to nicla vision setup
-  pinMode(PIN_RIGHT, OUTPUT);
-  pinMode(PIN_LEFT, OUTPUT);
-  pinMode(PIN_FORWARD, OUTPUT);
+  pinMode(PIN_STOP, OUTPUT);
 }
 
 void loop() {
-  if (irrecv.decode(&results)){
-    Serial.println(results.value, HEX);
-    irRemote(results.value);
+  if (irrecv.decode(&results)) {
+    uint32_t val = results.value;
+    Serial.println(val, HEX);
+    irRemote(val);
     irrecv.resume();
-  } 
+  }
 }
 
 void irRemote(uint32_t hexvalue){
   switch (hexvalue){
     case IR_REPEAT:
-     break;
-    case IR_STOP: 
-      digitalWrite(PIN_LEFT, LOW);
-      digitalWrite(PIN_FORWARD, LOW);
-      digitalWrite(PIN_RIGHT, LOW);
+      return; // Ignore repeat if needed
+
+    case IR_STOP:
+      digitalWrite(PIN_STOP, HIGH);
       digitalWrite(PIN_MOTOR_L, LOW);
       digitalWrite(PIN_MOTOR_R, LOW);
       break;
+
     case IR_FORWARD:
-      digitalWrite(PIN_LEFT, LOW);
-      digitalWrite(PIN_RIGHT, LOW);
-      digitalWrite(PIN_FORWARD, HIGH);
+      digitalWrite(PIN_STOP, LOW);
       digitalWrite(PIN_MOTOR_L, HIGH);
       digitalWrite(PIN_MOTOR_R, HIGH);
       break;
-    case IR_LEFT: 
-      digitalWrite(PIN_FORWARD, LOW);
-      digitalWrite(PIN_RIGHT, LOW);
-      digitalWrite(PIN_LEFT, HIGH);
+
+    case IR_LEFT:
+      digitalWrite(PIN_STOP, LOW);
       digitalWrite(PIN_MOTOR_L, LOW);
       digitalWrite(PIN_MOTOR_R, HIGH);
       break;
+
     case IR_RIGHT:
-      digitalWrite(PIN_LEFT, LOW);
-      digitalWrite(PIN_FORWARD, LOW);
-      digitalWrite(PIN_RIGHT, HIGH);
+      digitalWrite(PIN_STOP, LOW);
       digitalWrite(PIN_MOTOR_L, HIGH);
       digitalWrite(PIN_MOTOR_R, LOW);
       break;
+      
+    default:
+      return;
   }
 }

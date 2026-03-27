@@ -24,18 +24,15 @@ def sensorSetup():
     sensor.skip_frames(time=2000)
 
 
-# Checks which buttons are pressed. 1=on 0=off
+# Checks which buttons are pressed. 1=on 0=off    pHog = motR  pVan = motL   pFra =
 def buttonPress():
     led.on()
-    if pHog.value() == 1 and pFra.value() == 1:
-        return 0
-
-    if pFra.value() == 1:
-        target_folder = "fram"
-    elif pVan.value() == 1:
-        target_folder = "vanster"
-    elif pHog.value() == 1:
+    if pHog.value() == 1 and pVan.value() == 0 and pSto.value() == 0:
         target_folder = "hoger"
+    elif pHog.value() == 0 and pVan.value() == 1 and pSto.value() == 0:
+        target_folder = "vanster"
+    elif pHog.value() == 1 and pVan.value() == 1 and pSto.value() == 0:
+        target_folder = "fram"
     else:
         return 0
 
@@ -57,8 +54,8 @@ img_id = 0
 
 # pin setup:
 pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
-pFra = Pin("D2", Pin.IN, Pin.PULL_UP)
-pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
+pHog = Pin("D2", Pin.IN, Pin.PULL_UP)
+pSto = Pin("D1", Pin.IN, Pin.PULL_UP)
 led = LED("LED_BLUE")
 
 # Run loop
