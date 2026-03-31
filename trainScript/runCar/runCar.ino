@@ -1,19 +1,17 @@
+#include <Arduino.h>
 #include <IRremote.h>
 
-#define PIN_LEFT 7
-#define PIN_FORWARD 6
-#define PIN_RIGHT 5
-#define PIN_MOTOR_L 4
-#define PIN_MOTOR_R 3
-#define PIN_IR 11
+const int left = 7;
+const int forward = 6;
+const int right = 5;
+const int motorleft = 4;
+const int motorright = 3;
+const int ir_pin = 2;
 
-#define IR_REPEAT 0xFFFFFFFF
-#define IR_STOP 0xFF9867
-#define IR_FORWARD 0xFFA857
-#define IR_LEFT 0xFFE01F
-#define IR_RIGHT 0xFF906F
+bool forw = false;
+String direction = "stop";
 
-IRrecv irrecv(PIN_IR);
+IRrecv irrecv(ir_pin);
 decode_results results;
 
 void setup() {
@@ -21,57 +19,79 @@ void setup() {
 
   // Ir remote setup
   irrecv.enableIRIn();
-  irrecv.blink13(true);
+  // irrecv.blink13(true);
 
   // Motor setup
-  pinMode(PIN_MOTOR_L, OUTPUT);
-  pinMode(PIN_MOTOR_R, OUTPUT);
+  pinMode(motorleft, OUTPUT);
+  pinMode(motorright, OUTPUT);
 
   // Output to nicla vision setup
-  pinMode(PIN_RIGHT, OUTPUT);
-  pinMode(PIN_LEFT, OUTPUT);
-  pinMode(PIN_FORWARD, OUTPUT);
+  pinMode(right, OUTPUT);
+  pinMode(left, OUTPUT);
+  pinMode(forward, OUTPUT);
 }
 
 void loop() {
   if (irrecv.decode(&results)){
-    Serial.println(results.value, HEX);
-    irRemote(results.value);
+    direction = irRemote(direction);
     irrecv.resume();
+    runCar(direction);
   } 
+  Serial.println(direction);
 }
 
-void irRemote(uint32_t hexvalue){
-  switch (hexvalue){
-    case IR_REPEAT:
-     break;
-    case IR_STOP: 
-      digitalWrite(PIN_LEFT, LOW);
-      digitalWrite(PIN_FORWARD, LOW);
-      digitalWrite(PIN_RIGHT, LOW);
-      digitalWrite(PIN_MOTOR_L, LOW);
-      digitalWrite(PIN_MOTOR_R, LOW);
-      break;
-    case IR_FORWARD:
-      digitalWrite(PIN_LEFT, LOW);
-      digitalWrite(PIN_RIGHT, LOW);
-      digitalWrite(PIN_FORWARD, HIGH);
-      digitalWrite(PIN_MOTOR_L, HIGH);
-      digitalWrite(PIN_MOTOR_R, HIGH);
-      break;
-    case IR_LEFT: 
-      digitalWrite(PIN_FORWARD, LOW);
-      digitalWrite(PIN_RIGHT, LOW);
-      digitalWrite(PIN_LEFT, HIGH);
-      digitalWrite(PIN_MOTOR_L, LOW);
-      digitalWrite(PIN_MOTOR_R, HIGH);
-      break;
-    case IR_RIGHT:
-      digitalWrite(PIN_LEFT, LOW);
-      digitalWrite(PIN_FORWARD, LOW);
-      digitalWrite(PIN_RIGHT, HIGH);
-      digitalWrite(PIN_MOTOR_L, HIGH);
-      digitalWrite(PIN_MOTOR_R, LOW);
-      break;
+
+String irRemote(String direction){
+  if (results.value == 0xFF9867){
+    forw = false;
+    return "stop";
+  } 
+
+  if (results.value == 0xFFFFFFFF){
+    return direction;
+  }
+
+  if (results.value == 0xFFA857){
+    forw = true;
+  }
+
+  if (forw == true){
+    if (results.value == 0xFFE01F){
+      direction = "left";
+    } else if (results.value == 0xFF906F){
+      direction = "right";
+    } else{
+      direction = "forward";
+    }
+  }
+
+  return direction;
+}
+
+void runCar(String direction){
+  if (direction == "left"){
+    digitalWrite(forward, LOW);
+    digitalWrite(right, LOW);
+    digitalWrite(left, HIGH);
+    digitalWrite(motorleft, LOW);
+    digitalWrite(motorright, HIGH);
+  } else if (direction == "right"){
+    digitalWrite(left, LOW);
+    digitalWrite(forward, LOW);
+    digitalWrite(right, HIGH);
+    digitalWrite(motorleft, HIGH);
+    digitalWrite(motorright, LOW);
+  } else if (direction == "stop"){
+    digitalWrite(left, LOW);
+    digitalWrite(forward, LOW);
+    digitalWrite(right, LOW);
+    digitalWrite(motorleft, LOW);
+    digitalWrite(motorright, LOW);
+  } else if (direction == "forward"){
+    digitalWrite(left, LOW);
+    digitalWrite(right, LOW);
+    digitalWrite(forward, HIGH);
+    digitalWrite(motorleft, HIGH);
+    digitalWrite(motorright, HIGH);
   }
 }

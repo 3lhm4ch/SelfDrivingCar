@@ -39,7 +39,7 @@ void loop() {
 void irRemote(uint32_t hexvalue){
   switch (hexvalue){
     case IR_REPEAT:
-      return; // Ignore repeat if needed
+      return; // Ignore repeat
 
     case IR_STOP:
       digitalWrite(PIN_STOP, HIGH);

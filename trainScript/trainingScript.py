@@ -1,8 +1,7 @@
-import sensor  # type: ignore
+import sensor # type: ignore
 import time
 import os
-from machine import Pin  # type: ignore
-from machine import LED  # type: ignore
+from machine import Pin # type: ignore
 
 
 # Checks if the right directories are included on the nicla vision. If not then add the directory
@@ -13,6 +12,8 @@ def makeDir():
         os.mkdir("hoger")
     if "fram" not in os.listdir():
         os.mkdir("fram")
+    if "stop" not in os.listdir():
+        os.mkdir("stop")
 
 
 # Setup for the camera
@@ -20,31 +21,30 @@ def sensorSetup():
     sensor.reset()
     sensor.set_pixformat(sensor.RGB565)
     sensor.set_framesize(sensor.QVGA)
-    sensor.set_windowing((240, 240))
+    sensor.set_windowing((240, 240))  # just to test
     sensor.skip_frames(time=2000)
 
 
-# Checks which buttons are pressed. 1=on 0=off
-def buttonPress():
-    led.on()
-    if pHog.value() == 1 and pFra.value() == 1:
-        return 0
-
-    if pFra.value() == 1:
-        target_folder = "fram"
-    elif pVan.value() == 1:
-        target_folder = "vanster"
-    elif pHog.value() == 1:
-        target_folder = "hoger"
-    else:
-        return 0
-
-    global img_id
+# Takes a picture and sends it to the internal storage of the nicla vision
+def takePic(target_folder, img_id):
     img = sensor.snapshot()
     path = target_folder + "/" + target_folder + str(img_id) + ".jpg"
     img.save(path)
     print(path)
-    img_id += 1
+
+
+# Checks which buttons are pressed. 1=on 0=off
+def buttonPress():
+    if pFra.value() == pHog.value() and pHog.value() == pVan.value():
+        return "stop"
+    elif pFra.value() == 1:
+        return "fram"
+    elif pHog.value() == 1:
+        return "hoger"
+    elif pVan.value() == 1:
+        return "vanster"
+    else:
+        return "stop"
 
 
 # Global setup
@@ -54,16 +54,20 @@ sensorSetup()
 # Global variables
 clock = time.clock()
 img_id = 0
+direction = "stop"
 
 # pin setup:
 pVan = Pin("D3", Pin.IN, Pin.PULL_UP)
 pFra = Pin("D2", Pin.IN, Pin.PULL_UP)
 pHog = Pin("D1", Pin.IN, Pin.PULL_UP)
-led = LED("LED_BLUE")
 
 # Run loop
 while (True):
     clock.tick()
-    buttonPress()
-    led.off()
+
+    direction = buttonPress()
+    if direction != "stop":  # Prevent corrupting images
+        takePic(direction, img_id)
+        img_id += 1
+
     print(clock.fps())

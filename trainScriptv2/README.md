@@ -16,7 +16,7 @@ Right motor signal -> 3<br>
 IR signal -> 11
 
 <h3>Ir Remote</h3>
-Use a xxx remote<br>
+Use a Makeblock remote<br>
 To go forward press the cogwheel<br>
 To turn press the left or right button <br>
 To stop the vehicle press down button
