@@ -1,20 +1,7 @@
-import sensor
+import sensor  # type: ignore
 import time
 import os
-from machine import Pin
-
-
-# Functions not in use
-def irRemote():
-    # find irremote and decode.
-    direction = "fram"
-    return direction
-
-
-# outputs the direction as a string
-def ai():
-    img = sensor.snapshot()
-    # mata in img to ai model
+from machine import Pin  # type: ignore
 
 
 # Checks if the right directories are included on the nicla vision. If not then add the directory
@@ -25,8 +12,6 @@ def makeDir():
         os.mkdir("hoger")
     if "fram" not in os.listdir():
         os.mkdir("fram")
-    if "stop" not in os.listdir():
-        os.mkdir("stop")
 
 
 # Setup for the camera
@@ -34,38 +19,51 @@ def sensorSetup():
     sensor.reset()
     sensor.set_pixformat(sensor.RGB565)
     sensor.set_framesize(sensor.QVGA)
+    sensor.set_windowing((240, 240))
     sensor.skip_frames(time=2000)
 
 
-# Takes a picture and sends it to the internal storage of the nicla vision
-def takePic(target_folder, img_id):
-    if target_folder == "stop":  # if car is standing still then dont save to the folder
+# outputs the direction as a string
+def ai():
+    img = sensor.snapshot()
+    # mata in img to ai model
+    direction = 0  # Directions: 0=stop 1=fram 2=vanster 3=hoger
+    return direction
+
+
+# Takes a picture and sends it to the internal storage of the nicla vision. 
+def takePic(target_folder):
+    if target_folder == 1:
+        target_folder = "fram"
+    elif target_folder == 2:
+        target_folder = "vanster"
+    elif target_folder == 3:
+        target_folder = "hoger"
+    else:  # if car is standing still then dont save to the folder
         return
 
+    global img_id
     img = sensor.snapshot()
     path = target_folder + "/" + target_folder + str(img_id) + ".jpg"
     img.save(path)
     print(path)
+    img_id += 1
 
 
-# Turns dc motor on/off
+# Turns motor on/off
 def runCar(direction):
-    if direction == "fram":
+    if direction == 1:
         pMotHog.on()
         pMotVan.on()
-        print("driving forward")
-    elif direction == "hoger":
+    elif direction == 3:
         pMotHog.off()
         pMotVan.on()
-        print("driving right")
-    elif direction == "vanster":
+    elif direction == 2:
         pMotHog.on()
         pMotVan.off()
-        print("driving left")
     else:
         pMotHog.off()
         pMotVan.off()
-        print("Stop")
 
 
 # Global setup
@@ -83,13 +81,15 @@ img_id = 0
 pMotHog = Pin("CS", Pin.OUT)
 pMotVan = Pin("D0", Pin.OUT)
 
-
 # Run loop
 while (True):
     clock.tick()
 
-    # runCar(ai())  # When running ai
-    # takePic(ai(), img_id)  # When running ai + training
+    direction = ai()
+    runCar(direction)  # When running ai
+    # takePic(direction)  # When running ai + training
 
-    img_id += 1
+    if "stop" == True:
+        break
+    
     print(clock.fps())
