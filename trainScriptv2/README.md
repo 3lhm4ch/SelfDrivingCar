@@ -7,12 +7,14 @@ D2   ->   4<br>
 D1   ->   3
 
 <h3>Connect the Relays signal to the following ports on the Arduino Uno</h3>
-Right motor signal -> 3<br>
 Left motor signal -> 4<br>
+Right motor signal -> 3<br>
 
 <h3>Connect the ir sensor to the following ports on the Arduino Uno</h3>
-<p>IR signal -> 11</p>
+IR signal -> 11
 
 <h3>Ir Remote</h3>
-<p>Use a xxx remote</p>
-<p>To go forward press the cogwheel</p>
+Use a xxx remote<br>
+To go forward press the cogwheel<br>
+To turn press the left or right button <br>
+To stop the vehicle press down button
