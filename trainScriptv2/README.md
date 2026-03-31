@@ -1,4 +1,6 @@
-<h1>To train the model you need one arduino UNO and one arduino nicla vision. Upload the "trainingScript.py" to the arduino nicla vision via openmv ide. Upload the "runCar.ino" to the arduino uno via arduino ide. </h1>
+<h1>Newest version of the training script</h1>
+
+To train the model you need one arduino UNO and one arduino nicla vision. Upload the "trainingScript.py" to the arduino nicla vision via openmv ide. Upload the "runCar.ino" to the arduino uno via arduino ide.
 
 <h3>Connect the following pins on the nicla vision to the following ports on the Arduino Uno.</h3>
 Nicla   Arduino<br>
