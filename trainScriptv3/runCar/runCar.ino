@@ -3,9 +3,9 @@
 #define PIN_LEFT 7
 #define PIN_RIGHT 6
 #define PIN_STOP 5
-#define PIN_MOTOR_L 4
-#define PIN_MOTOR_R 3
-#define PIN_IR 11
+#define PIN_MOTOR_L 10  // speed for motor left  0-255
+#define PIN_MOTOR_R 11  // speed for motor right 0-255
+#define PIN_IR 2
 
 #define IR_REPEAT 0xFFFFFFFF
 #define IR_STOP 0xFF9867
@@ -48,35 +48,35 @@ void loop() {
 void irRemote(uint32_t hexvalue){
   switch (hexvalue){
     case IR_STOP:
-      digitalWrite(PIN_STOP, HIGH);
-      digitalWrite(PIN_MOTOR_L, LOW);
-      digitalWrite(PIN_MOTOR_R, LOW);
+      analogWrite(PIN_MOTOR_L, 0);
+      analogWrite(PIN_MOTOR_R, 0);
       digitalWrite(PIN_LEFT, LOW);
       digitalWrite(PIN_RIGHT, LOW);
+      digitalWrite(PIN_STOP, HIGH);
       break;
 
     case IR_FORWARD:
-      digitalWrite(PIN_STOP, LOW);
-      digitalWrite(PIN_MOTOR_L, HIGH);
-      digitalWrite(PIN_MOTOR_R, HIGH);
+      analogWrite(PIN_MOTOR_L, 200);
+      analogWrite(PIN_MOTOR_R, 200);
       digitalWrite(PIN_LEFT, HIGH);
       digitalWrite(PIN_RIGHT, HIGH);
+      digitalWrite(PIN_STOP, LOW);
       break;
 
     case IR_LEFT:
-      digitalWrite(PIN_STOP, LOW);
-      digitalWrite(PIN_MOTOR_L, LOW);
-      digitalWrite(PIN_MOTOR_R, HIGH);
+      analogWrite(PIN_MOTOR_L, 0);
+      analogWrite(PIN_MOTOR_R, 100);
       digitalWrite(PIN_LEFT, LOW);
       digitalWrite(PIN_RIGHT, HIGH);
+      digitalWrite(PIN_STOP, LOW);
       break;
 
     case IR_RIGHT:
-      digitalWrite(PIN_STOP, LOW);
-      digitalWrite(PIN_MOTOR_L, HIGH);
-      digitalWrite(PIN_MOTOR_R, LOW);
+      analogWrite(PIN_MOTOR_L, 100);
+      analogWrite(PIN_MOTOR_R, 0);
       digitalWrite(PIN_LEFT, HIGH);
       digitalWrite(PIN_RIGHT, LOW);
+      digitalWrite(PIN_STOP, LOW);
       break;
       
     default:
