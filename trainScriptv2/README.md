@@ -20,3 +20,6 @@ Use a Makeblock remote<br>
 To go forward press the cogwheel<br>
 To turn press the left or right button <br>
 To stop the vehicle press down button
+
+
+to use with motorshield. connect the shield to 9v battery. Motor left to A and motor right to B. send analog signal from arduino to pin 10 for controlling left motor speed, pin 11 for motor right. (12,13 for direction)
