@@ -2,6 +2,9 @@ import sensor  # type: ignore
 import time
 import os
 from machine import Pin  # type: ignore
+import image, tf
+
+labels, net = tf.load_builtin_model('trained')
 
 
 # Checks if the right directories are included on the nicla vision. If not then add the directory
@@ -26,8 +29,21 @@ def sensorSetup():
 # outputs the direction as a string
 def ai():
     img = sensor.snapshot()
-    # mata in img to ai model
-    direction = 0  # Directions: 0=stop 1=fram 2=vanster 3=hoger
+
+    for obj in tf.classify(net, img, min_scale=1.0, scale_mul=0.8, x_overlap=0.5, y_overlap=0.5):
+        print("**********\nPredictions at [x=%d,y=%d,w=%d,h=%d]" % obj.rect())
+        img.draw_rectangle(obj.rect())
+        # This combines the labels and confidence values into a list of tuples
+        predictions_list = list(zip(labels, obj.output()))
+
+        for i in range(len(predictions_list)):
+            confidence = predictions_list[i][1]
+            label = predictions_list[i][0]
+            print("%s = %f" % (label, confidence))
+
+            if confidence > 0.9 and label != "unknown":
+                direction = label
+
     return direction
 
 
@@ -52,18 +68,22 @@ def takePic(target_folder):
 
 # Turns motor on/off
 def runCar(direction):
-    if direction == 1:
-        pMotHog.on()
-        pMotVan.on()
-    elif direction == 3:
-        pMotHog.off()
-        pMotVan.on()
-    elif direction == 2:
-        pMotHog.on()
-        pMotVan.off()
+    if direction == "forward":
+        pVan.on()
+        pHog.on()
+        pSto.off()
+    elif direction == "left":
+        pVan.off()
+        pHog.on()
+        pSto.off()
+    elif direction == "right":
+        pVan.on()
+        pHog.off()
+        pSto.off()
     else:
-        pMotHog.off()
-        pMotVan.off()
+        pVan.off()
+        pHog.off()
+        pSto.on()
 
 
 # Global setup
@@ -78,18 +98,19 @@ img_id = 0
 
 # pin setup:
 
-pMotHog = Pin("CS", Pin.OUT)
-pMotVan = Pin("D0", Pin.OUT)
+pVan = Pin("D3", Pin.OUT)
+pHog = Pin("D2", Pin.OUT)
+pSto = Pin("D1", Pin.OUT)   
 
 # Run loop
 while (True):
     clock.tick()
 
     direction = ai()
-    runCar(direction)  # When running ai
-    # takePic(direction)  # When running ai + training
+    runCar(direction)  # When running the car
+    # takePic(direction)  # When running the car + training
 
-    if "stop" == True:
+    if pON.value() == 1:
         break
     
     print(clock.fps())

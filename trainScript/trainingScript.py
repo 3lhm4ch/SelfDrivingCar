@@ -20,7 +20,6 @@ def sensorSetup():
     sensor.reset()
     sensor.set_pixformat(sensor.RGB565)
     sensor.set_framesize(sensor.QVGA)
-    # sensor.set_windowing((240, 240))  # just to test
     sensor.skip_frames(time=2000)
 
 
